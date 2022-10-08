@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Build;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ContainerManager : MonoBehaviour
@@ -12,16 +14,14 @@ public class ContainerManager : MonoBehaviour
     private List<GameObject> tiles;
     private int containerCount = 0;
     [SerializeField] private GameObject warning;
+    [SerializeField] private GameObject finishPanel;
+    [SerializeField] private GameObject finishText;
     [SerializeField] private Text score;
     void Start ()
     {
         if (instance == null) {
             instance = this; 
-        } else if(instance == this){ 
-            Destroy(gameObject); 
-        }
-
-        DontDestroyOnLoad(gameObject);
+        } 
 
         InitializeManager();
     }
@@ -59,6 +59,7 @@ public class ContainerManager : MonoBehaviour
         }
         else
         {
+            FailedGame();
             return;
         }
     }
@@ -72,12 +73,41 @@ public class ContainerManager : MonoBehaviour
             {
                 if (tiles[i].CompareTag(tagName))
                 {
-                    Destroy(tiles[i]);
+                    tiles[i].SetActive(false);
                     tiles[i] = items[i];
                     containerCount--;
                     score.text = (int.Parse(score.text) + 1).ToString();
                 }
             }
         }
+
+        if (int.Parse(score.text) == 15)
+        {
+            FinishGame();
+        }
+    }
+
+    
+    private void FinishGame()
+    {
+        finishText.GetComponent<Text>().text = "Вы выиграли!";
+        finishPanel.SetActive(true);
+        finishText.GetComponent<Animator>().SetBool("shouldFadeOut", true);
+        StartCoroutine(OpenMenu());
+
+    }
+    private void FailedGame()
+    {
+        finishText.GetComponent<Text>().text = "Вы проиграли!";
+
+        finishPanel.SetActive(true);
+        finishText.GetComponent<Animator>().SetBool("shouldFadeOut", true);
+        StartCoroutine(OpenMenu());
+    }
+
+    public IEnumerator OpenMenu()
+    {
+        yield return new WaitForSeconds(5f);
+        SceneManager.LoadScene("MainMenu");
     }
 }

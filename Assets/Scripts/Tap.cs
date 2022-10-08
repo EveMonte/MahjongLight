@@ -12,6 +12,7 @@ public class Tap : MonoBehaviour
     private bool toContainer = false;
     private Vector3 targetPosition;
     private Vector3 startPosition;
+    private bool isLocked = false;
 
 
     private void Start()
@@ -33,8 +34,9 @@ public class Tap : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        if (isActive)
+        if (isActive && !isLocked)
         {
+            isLocked = true;
             ContainerManager.instance.AddToContainer(gameObject);
             if (underlyingTile != null)
             {
