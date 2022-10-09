@@ -8,6 +8,7 @@ TagManager:
   - Key
   - Coin
   - Heart
+  - Busy
   layers:
   - Default
   - TransparentFX

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -17,6 +16,7 @@ public class ContainerManager : MonoBehaviour
     [SerializeField] private GameObject finishPanel;
     [SerializeField] private GameObject finishText;
     [SerializeField] private Text score;
+    private AudioSource triple;
     void Start ()
     {
         if (instance == null) {
@@ -30,6 +30,7 @@ public class ContainerManager : MonoBehaviour
     {
         containerCapacity = items.Count;
         tiles = new List<GameObject>(items);
+        triple = gameObject.GetComponent<AudioSource>();
     }
 
     public void SetSettings()
@@ -50,8 +51,7 @@ public class ContainerManager : MonoBehaviour
             {
                 if (tiles[i].CompareTag("Untagged"))
                 {
-                    tiles[i] = tile;
-                    containerCount++;
+                    tiles[i].tag = "Busy";
                     tile.SendMessage("ActivateMovementToContainer", items[i].transform.position);
                     return;
                 }
@@ -64,11 +64,28 @@ public class ContainerManager : MonoBehaviour
         }
     }
 
+    public void AddToTiles(GameObject tile)
+    {
+        for (int i = 0; i < containerCapacity; i++)
+        {
+            if (tiles[i].CompareTag("Busy"))
+            {
+                tiles[i].tag = "Untagged";
+                tiles[i] = tile;
+                containerCount++;
+                LookingForTriple(tile.tag);
+                return;
+            }
+        }
+
+    }
+
     public void LookingForTriple(string tagName)
     {
         int count = tiles.Count(n => n.CompareTag(tagName));
         if (count == 3)
         {
+            triple.PlayOneShot(triple.clip);
             for (int i = 0; i < tiles.Count; i++)
             {
                 if (tiles[i].CompareTag(tagName))

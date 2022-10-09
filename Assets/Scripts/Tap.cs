@@ -64,7 +64,7 @@ public class Tap : MonoBehaviour
             if (time / duration >= 1)
             {
                 toContainer = false;
-                ContainerManager.instance.LookingForTriple(gameObject.tag);
+                ContainerManager.instance.AddToTiles(gameObject);
             }
         }
     }
