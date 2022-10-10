@@ -43,8 +43,9 @@ public class ContainerManager : MonoBehaviour
         warning.SendMessage("TurnOnFadingOut", SendMessageOptions.DontRequireReceiver);
     }
 
-    public void AddToContainer(GameObject tile)
+    public bool AddToContainer(GameObject tile)
     {
+        
         if (containerCount < containerCapacity)
         {
             for (int i = 0; i < containerCapacity; i++)
@@ -53,15 +54,12 @@ public class ContainerManager : MonoBehaviour
                 {
                     tiles[i].tag = "Busy";
                     tile.SendMessage("ActivateMovementToContainer", items[i].transform.position);
-                    return;
+                    return true;
                 }
             }
         }
-        else
-        {
-            FailedGame();
-            return;
-        }
+
+        return false;
     }
 
     public void AddToTiles(GameObject tile)
@@ -101,6 +99,11 @@ public class ContainerManager : MonoBehaviour
         if (int.Parse(score.text) == 15)
         {
             FinishGame();
+        }
+        else if (containerCount >= containerCapacity)
+        {
+            FailedGame();
+
         }
     }
 

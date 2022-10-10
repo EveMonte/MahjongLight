@@ -36,8 +36,7 @@ public class Tap : MonoBehaviour
     {
         if (isActive && !isLocked)
         {
-            isLocked = true;
-            ContainerManager.instance.AddToContainer(gameObject);
+            isLocked = ContainerManager.instance.AddToContainer(gameObject);
             if (underlyingTile != null)
             {
                 underlyingTile.SendMessage("IsActive", true, SendMessageOptions.DontRequireReceiver);
